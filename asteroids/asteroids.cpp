@@ -118,7 +118,6 @@ int main(int argc, char* argv[])
 		cout << "You can also skip the start menu with: " << argv[0] << " skip" << endl;
 	    }
 	} else if (firstTime) {
-	    //done = check_keys(&e);
 	    cout << "You can also skip the start menu with: " << argv[0] << " skip" << endl;
 	    firstTime = false;
 	}
@@ -627,7 +626,6 @@ void physics(Game *g)
 		normalize(g->ship.vel);
 		g->ship.vel[0] *= speed;
 		g->ship.vel[1] *= speed;
-		cout << "VelocityX: " << g->ship.vel[0] << "   VelocityY: " << g->ship.vel[1] << endl;
 	    }
 	}
     }
@@ -674,7 +672,7 @@ void physics(Game *g)
 		Bullet *b2 = new Bullet;
 		timeCopy(&b2->time, &bt);
 		b2->pos[0] = g->ship.pos[0];
-		b2->pos[1] = g->ship.pos[1] + 10;
+		b2->pos[1] = g->ship.pos[1];
 		b2->vel[0] = g->ship.vel[0];
 		b2->vel[1] = g->ship.vel[1];
 		//convert ship angle to radians
@@ -682,8 +680,8 @@ void physics(Game *g)
 		//convert angle to a vector
 		Flt xdir = cos(rad);
 		Flt ydir = sin(rad);
-		b2->pos[0] += xdir*20.0f;
-		b2->pos[1] += ydir*20.0f;
+		b2->pos[0] += xdir*20.0f + 10;
+		b2->pos[1] += ydir*20.0f + 10;
 		b2->vel[0] += xdir*6.0f + rnd()*0.1;
 		b2->vel[1] += ydir*6.0f + rnd()*0.1;
 		b2->color[0] = 1.0f;
@@ -718,7 +716,7 @@ void render(Game *g)
 	    y = random(3);
 	    z = random(3);
 	    glColor4f(x,y,z,1.0f);
-	    if(g->ship.superMode >= (super + 50)) {
+	    if(g->ship.superMode >= (super + 100)) {
 		//fmod_stopsound(1); /*Not a Function*/
 		g->ship.superMode = 0;
 	    }
