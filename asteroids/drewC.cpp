@@ -74,7 +74,7 @@ void asteroidCollision(Asteroid *a, Game *g)
 
 bool endGame(Game *g)
 {
-	if (g->ship.damageTaken >= 100 || g->nasteroids == 0) {
+	if (g->ship.damageTaken >= 100) {
 		return true;
 	} else {
 		return false;

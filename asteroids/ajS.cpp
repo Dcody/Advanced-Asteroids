@@ -145,7 +145,7 @@ void BossMvmtBulletCol(Game *&g, Boss *&boss, bool &hadBoss) {
 	    boss->pos[0] += (float)xres+200;
 	}
 	else if (boss->pos[0] > (float)xres+100) {
-	    boss->pos[0] += (float)xres+200;
+	    boss->pos[0] -= (float)xres+200;
 	}
 	else if (boss->pos[1] < -100.0) {
 	    boss->pos[1] += (float)yres+200;
@@ -162,17 +162,24 @@ void BossMvmtBulletCol(Game *&g, Boss *&boss, bool &hadBoss) {
 	    d1 = b->pos[1] - boss->pos[1];
 	    dist = sqrt(d0*d0 + d1*d1);
 	    if (dist < (boss->radius-100)) {
-		cout << "hit" << endl;
+		//cout << "hit" << endl;
 		boss->color[0] = 1;
 		boss->color[1] = 0;
 		boss->color[2] = 0;
 		boss->lifePoint--;
+
+		if (boss->lifePoint % 10 == 0) {
+		    boss->vel[0] = random(3);
+		    boss->vel[0] = random(3);
+		}
+
 
 		//delete the bullet..
 		Bullet *saveb = b->next;
 		deleteBulletBoss(g,b);
 		b = saveb;
 		break;
+
 	    }
 	    if(boss->lifePoint <= 0){
 		delete boss;

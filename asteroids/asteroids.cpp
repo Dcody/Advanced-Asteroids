@@ -65,7 +65,7 @@ int xres=1250, yres=900;
 
 GLuint asteroidtext, BossTex;
 int play_sounds = 0;
-const int super = 200;
+const int super = 1;
 int killcount = 0;
 
 int keys[65536];
@@ -290,7 +290,7 @@ void check_resize(XEvent *e)
 
 void init(Game *g) {
     // start with 10 asteroids
-    for (int j=0; j<10; j++) {
+    for (int j=0; j<1; j++) {
 	Asteroid *a = new Asteroid;
 	a->nverts = 4;
 	a->radius = rnd()*80.0 + 40.0;
@@ -719,10 +719,10 @@ void render(Game *g)
     if (!gameOver) {
 	//-------------------------------------------------------------------------
 	//Draw the ship
-	if((killcount > 0 || g->nasteroids < 150) && isBossLevel == false && hadBoss == false && boss == NULL) {
+	/*if((g->nasteroids < ) && isBossLevel == false && hadBoss == false && boss == NULL) {
 	    isBossLevel = true;
 	    buildBoss(boss);
-	}
+	}*/
 
 	if( g->ship.superMode >= super ) {
 	    //play_music(1);
@@ -785,6 +785,10 @@ void render(Game *g)
 			&& g->score > 100) {
 		    resizeAsteroid(a);
 		}
+	if(g->nasteroids <= 10 && a->radius < 20 || g->nasteroids ==0) {
+	   // isBossLevel = true;
+	    buildBoss(boss);
+	}
 
 		glColor4f(a->color[0],a->color[1],a->color[2],1.0f);
 		glBindTexture(GL_TEXTURE_2D, asteroidtext);
