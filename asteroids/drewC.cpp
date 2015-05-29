@@ -7,7 +7,12 @@
 extern "C" {
 #include "fonts.h"
 }
-extern const int super;
+#include "drewC.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctime>
+#include <cmath>
+using namespace std;
 
 void resizeAsteroid(Asteroid *a)
 {
