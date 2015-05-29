@@ -105,4 +105,14 @@ struct Game {
 	}
 };
 
+struct Boss {
+    Vec pos;
+    Vec vel;
+    int nverts;
+    float radius;
+    Vec vert[8];
+    float color[4];
+    int lifePoint;
+};
+
 #endif

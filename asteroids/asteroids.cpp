@@ -63,9 +63,10 @@ void timeCopy(struct timespec *dest, struct timespec *source) {
 
 int xres=1250, yres=900;
 
-GLuint asteroidtext;
+GLuint asteroidtext, BossTex;
 int play_sounds = 0;
 const int super = 200;
+int killcount = 0;
 
 int keys[65536];
 
@@ -81,6 +82,10 @@ void physics(Game *game);
 void render(Game *game);
 bool endGame(Game *game);
 void endMenu(Game *game);
+bool isBossLevel;
+bool hadBoss;
+Boss *boss = NULL;
+
 
 int main(int argc, char* argv[])
 {
@@ -314,6 +319,7 @@ void init(Game *g) {
 		g->nasteroids++;
 	}
 	asteroidtext = getPpm();
+	BossTex = getBossPpm();
 	clock_gettime(CLOCK_REALTIME, &g->bulletTimer);
 	clock_gettime(CLOCK_REALTIME, &g->asteroidTimer);
 	memset(keys, 0, 65536);
@@ -403,6 +409,7 @@ void deleteAsteroid(Game *g, Asteroid *node)
 	}
 	delete node;
 	node = NULL;
+	killcount++;
 }
 
 void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
@@ -578,6 +585,8 @@ void physics(Game *g)
 			break;
 		a = a->next;
 	}
+	BossMvmtBulletCol(g,boss,hadBoss);
+
 	//---------------------------------------------------
 	//check keys pressed now
 	if (keys[XK_Left]) {
@@ -697,6 +706,12 @@ void physics(Game *g)
 				g->bulletsFired++;
 			}
 		}
+		
+	}
+	if((killcount > 0 || g->nasteroids < 150) && isBossLevel == false && hadBoss == false && boss == NULL) {
+	    isBossLevel = true;
+	    buildBoss(boss);
+
 	}
 }
 
@@ -819,6 +834,47 @@ void render(Game *g)
 				b = b->next;
 			}
 		}
+
+		//Draw boss
+		if(isBossLevel == true && boss != NULL && hadBoss == false) {
+			/*while (boss) {
+				if (g->gameTimer%15 == 0 
+						&& g->nasteroids <= 20 
+						&& g->gameTimer != 0 
+						&& g->score > 100) {
+					resizeAsteroid(a);
+				}*/
+
+				glColor4f(boss->color[0],boss->color[1],boss->color[2],1.0f);
+				glBindTexture(GL_TEXTURE_2D, BossTex);
+				glPushMatrix();
+				glTranslatef(boss->pos[0], boss->pos[1], boss->pos[2]);
+				glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
+				glBegin(GL_QUADS);
+				glTexCoord2f(0,0);//01
+				glVertex2f(boss->vert[0][0], boss->vert[0][1]);
+				glTexCoord2f(0,1);//11
+				glVertex2f(boss->vert[1][0], boss->vert[1][1]);
+				glTexCoord2f(1,1);//1,0
+				glVertex2f(boss->vert[2][0], boss->vert[2][1]);
+				glTexCoord2f(1,0);//0,0
+				glVertex2f(boss->vert[3][0], boss->vert[3][1]);
+				glEnd();
+				glPopMatrix();
+
+				//Center Point Dot
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glBegin(GL_POINTS);
+				glVertex2f(boss->pos[0], boss->pos[1]);
+				glEnd();
+				
+				boss->color[0]=1;
+				boss->color[1]=1;
+				boss->color[2]=1;
+		
+			}
+		
+
 		//Info Read Out
 		struct timespec at;
 		int yellow = 0x00ffff00;
