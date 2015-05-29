@@ -21,9 +21,10 @@
 #include "solidSphere.h"
 #include "structures.h"
 #include "drewC.cpp"
-#include "ajS.cpp"
+#include "ajS.h"
 #include "michaelW.cpp"
 #include "joannT.cpp"
+#include<GL/gl.h>
 extern "C" {
 #include "fonts.h"
 }

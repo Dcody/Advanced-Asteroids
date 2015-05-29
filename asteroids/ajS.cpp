@@ -5,6 +5,13 @@
   */
 #include "structures.h"
 #include "ppm.h"
+#include<stdlib.h>
+#include<stdio.h>
+#include<ctime>
+#include<cmath>
+#include<GL/gl.h>
+#include "ajS.h"
+using namespace std;
 
 
 GLuint getPpm()

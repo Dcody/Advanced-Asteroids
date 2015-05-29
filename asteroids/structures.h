@@ -1,5 +1,10 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
+
+#include <ctime>
+#include <stdlib.h>
+#include <cmath>
+
 #define VecZero(v) (v)[0]=0.0,(v)[1]=0.0,(v)[2]=0.0
 #define rnd() (((double)rand())/(double)RAND_MAX)
 #define random(a) (rand()%a)
