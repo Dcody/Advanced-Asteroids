@@ -20,8 +20,8 @@
 #include <X11/keysym.h>
 #include "solidSphere.h"
 #include "structures.h"
-#include "drewC.cpp"
 #include "ajS.h"
+#include "drewC.h"
 #include "michaelW.cpp"
 #include "joannT.cpp"
 #include<GL/gl.h>
@@ -786,7 +786,7 @@ void render(Game *g)
 			&& g->score > 100) {
 		    resizeAsteroid(a);
 		}
-	if(g->nasteroids <= 10 && a->radius < 20 || g->nasteroids ==0) {
+	if((g->nasteroids <= 10 && a->radius < 20) || g->nasteroids ==0) {
 	   // isBossLevel = true;
 	    buildBoss(boss);
 	}
