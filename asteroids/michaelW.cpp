@@ -2,9 +2,8 @@
  * Assignment:  HW3
  * Purpose:  Modularlize a program.
 */
-#ifndef mwines
-#define mwines
 
+#include "michaelW.h"
 #include <GL/glx.h>
 #include "ppm.h"
 #include "structures.h"
@@ -12,8 +11,6 @@
 Ppmimage *shipImage = NULL;
 GLuint shipTexture;
 
-void getShipTexture(void);
-void setShipTexture(Game *g);
 
 
 void getShipTexture(void) {
@@ -37,6 +34,5 @@ void setShipTexture(Game *g){
     glEnd();
 }
 
-#endif
 
 
