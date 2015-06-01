@@ -65,7 +65,6 @@ void buildBoss(Boss *&boss) {
 	boss->vert[i][0] = sin(angle) * (boss->radius);
 	boss->vert[i][1] = cos(angle) * (boss->radius);
 	angle += inc;
-
     }
     boss->pos[0]= xres/2.0;
     boss->pos[1]= yres;

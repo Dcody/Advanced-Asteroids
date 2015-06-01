@@ -66,7 +66,7 @@ int xres=1250, yres=900;
 
 GLuint asteroidtext, BossTex;
 int play_sounds = 0;
-const int super = 100;
+const int super = 1;
 int killcount = 0;
 
 int keys[65536];
@@ -84,8 +84,8 @@ void render(Game *game);
 bool endGame(Game *game);
 void endMenu(Game *game);
 void normalize(float *);
-bool isBossLevel;
-bool hadBoss;
+bool isBossLevel = false;
+bool hadBoss = false;
 Boss *boss = NULL;
 
 
@@ -700,14 +700,12 @@ void render(Game *g)
     bool gameOver = endGame(g);
 
     if (!gameOver) {
-	//-------------------------------------------------------------------------
-	//Draw the ship
-	/*if((g->nasteroids < ) && isBossLevel == false && hadBoss == false && boss == NULL) {
+
+	if(g->ahead == NULL) {
 	    isBossLevel = true;
 	    buildBoss(boss);
-	}*/
-
-	if( g->ship.superMode >= super ) {
+	}
+	if( g->ship.superMode >= super && isBossLevel == false ) {
 	    //play_music(1);
 	    int x, y, z;
 	    x = random(3);
@@ -768,10 +766,6 @@ void render(Game *g)
 			&& g->score > 100) {
 		    resizeAsteroid(a);
 		}
-	if((g->nasteroids <= 10 && a->radius < 20) || g->nasteroids ==0) {
-	   // isBossLevel = true;
-	    buildBoss(boss);
-	}
 
 		glColor4f(a->color[0],a->color[1],a->color[2],1.0f);
 		glBindTexture(GL_TEXTURE_2D, asteroidtext);
@@ -823,15 +817,11 @@ void render(Game *g)
 	}
 
 	//Draw boss
-	if(isBossLevel == true && boss != NULL && hadBoss == false) {
-	    /*while (boss) {
-	      if (g->gameTimer%15 == 0 
-	      && g->nasteroids <= 20 
-	      && g->gameTimer != 0 
-	      && g->score > 100) {
-	      resizeAsteroid(a);
-	      }*/
+	if(isBossLevel == true) {
 
+	    boss->color[0]=1;
+	    boss->color[1]=1;
+	    boss->color[2]=1;
 	    glColor4f(boss->color[0],boss->color[1],boss->color[2],1.0f);
 	    glBindTexture(GL_TEXTURE_2D, BossTex);
 	    glPushMatrix();
@@ -849,15 +839,6 @@ void render(Game *g)
 	    glEnd();
 	    glPopMatrix();
 
-	    //Center Point Dot
-	    glBindTexture(GL_TEXTURE_2D, 0);
-	    glBegin(GL_POINTS);
-	    glVertex2f(boss->pos[0], boss->pos[1]);
-	    glEnd();
-
-	    boss->color[0]=1;
-	    boss->color[1]=1;
-	    boss->color[2]=1;
 
 	}
 

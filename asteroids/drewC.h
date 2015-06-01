@@ -9,5 +9,6 @@ void endMenu(Game *g);
 bool endGame(Game *g);
 float bulletAccuracy(Game *g);
 extern const int super;
+extern bool hadBoss;
 #endif
 
