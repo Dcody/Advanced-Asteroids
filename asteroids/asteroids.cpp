@@ -66,7 +66,7 @@ int xres=1250, yres=900;
 
 GLuint asteroidtext, BossTex;
 int play_sounds = 0;
-const int super = 1;
+const int super = 100;
 int killcount = 0;
 
 int keys[65536];
@@ -83,6 +83,7 @@ void physics(Game *game);
 void render(Game *game);
 bool endGame(Game *game);
 void endMenu(Game *game);
+void normalize(float *);
 bool isBossLevel;
 bool hadBoss;
 Boss *boss = NULL;
@@ -326,7 +327,6 @@ void init(Game *g) {
     clock_gettime(CLOCK_REALTIME, &g->asteroidTimer);
     memset(keys, 0, 65536);
 }
-
 void normalize(Vec v) {
     Flt len = v[0]*v[0] + v[1]*v[1];
     if (len == 0.0f) {
@@ -338,7 +338,6 @@ void normalize(Vec v) {
     v[0] *= len;
     v[1] *= len;
 }
-
 int check_keys(XEvent *e)
 {
     //keyboard input?
@@ -621,24 +620,7 @@ void physics(Game *g)
     }
     if (keys[XK_Down]) {
 	//apply breaks!
-	Flt rad = ((g->ship.angle+90.0) / 360.0f) * PI * 2.0;
-	Flt xdir = cos(rad);
-	Flt ydir = sin(rad);
-	if (g->ship.superMode >= super) {
-	    g->ship.vel[0] = 0.0f;
-	    g->ship.vel[1] = 0.0f;
-	} else {
-	    g->ship.vel[0] += xdir * -0.025f;
-	    g->ship.vel[1] += ydir * -0.025f;
-	    Flt speed = sqrt(g->ship.vel[0]*g->ship.vel[0]+
-		    g->ship.vel[1]*g->ship.vel[1]);
-	    if (speed > 5.0f) {
-		speed = 5.0f;
-		normalize(g->ship.vel);
-		g->ship.vel[0] *= speed;
-		g->ship.vel[1] *= speed;
-	    }
-	}
+	slowDown(g);
     }
     if (keys[XK_space]) {
 	//a little time between each bullet
@@ -940,28 +922,10 @@ void render(Game *g)
 		b = b->next;
 	    }
 	}
-	//Info Read Out
 	struct timespec at;
-	int yellow = 0x00ffff00;
 	clock_gettime(CLOCK_REALTIME, &at);
 	g->gameTimer = timeDiff(&g->asteroidTimer, &at);
-
-	Rect r;
-	r.bot = yres - 40;
-	r.left = 10;
-	r.center = 0;
-	ggprint16(&r, 20, 0x00ff0000, "CS335 - Advanced Asteroids");
-	//ggprint8b(&r, 16, yellow, "n asteroids: %i", g->nasteroids);
-	//ggprint8b(&r, 16, yellow, "Game time: %i", g->gameTimer);
-	//ggprint8b(&r, 16, yellow, "Super Mode: %i", g->ship.superMode);
-	//ggprint8b(&r, 20, yellow, "Accuracy: %4.2f%", g->accuracy);
-	ggprint16(&r, 20, yellow, "Score: %i", g->score);
-	ggprint16(&r, 20, yellow, "Damage: %i", g->ship.damageTaken);
-	if (g->bulletsFired == 0) {
-	    g->accuracy = 0.0;
-	} else {
-	    g->accuracy = bulletAccuracy(g);
-	}
+	readOut(g);
     }
     //Gameover Flag, delete all remaining asteroids
     if (gameOver) {
