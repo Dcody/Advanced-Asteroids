@@ -69,6 +69,7 @@ int play_sounds = 0;
 const int super = 1;
 int killcount = 0;
 
+Boss *boss = NULL;
 int keys[65536];
 
 //function prototypes
@@ -81,12 +82,12 @@ void init(Game *g);
 void init_sounds(void);
 void physics(Game *game);
 void render(Game *game);
-bool endGame(Game *game);
+bool endGame(Game *game, Boss *&boss);
 void endMenu(Game *game);
 void normalize(float *);
 bool isBossLevel = false;
 bool hadBoss = false;
-Boss *boss = NULL;
+//Boss *boss = NULL;
 
 
 int main(int argc, char* argv[])
@@ -697,11 +698,11 @@ void physics(Game *g)
 void render(Game *g)
 {
     draw_background();
-    bool gameOver = endGame(g);
+    bool gameOver = endGame(g,boss);
 
     if (!gameOver) {
 
-	if(g->ahead == NULL) {
+	if(g->ahead == NULL and boss==NULL) {
 	    isBossLevel = true;
 	    buildBoss(boss);
 	}

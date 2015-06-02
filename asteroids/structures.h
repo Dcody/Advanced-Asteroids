@@ -119,6 +119,7 @@ struct Boss {
     Vec vert[8];
     float color[4];
     int lifePoint;
+    bool killShip;
 };
 
 
