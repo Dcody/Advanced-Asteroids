@@ -68,6 +68,7 @@ GLuint asteroidtext, BossTex;
 int play_sounds = 0;
 const int super = 1;
 int killcount = 0;
+int timeToEnd = 100;
 
 Boss *boss = NULL;
 int keys[65536];
@@ -699,8 +700,11 @@ void render(Game *g)
 {
     draw_background();
     bool gameOver = endGame(g,boss);
+    if(gameOver)
+	timeToEnd--;
+    cout << timeToEnd << "\n";
 
-    if (!gameOver) {
+    if (!gameOver || timeToEnd >= 0) {
 
 	if(g->ahead == NULL and boss==NULL) {
 	    isBossLevel = true;
