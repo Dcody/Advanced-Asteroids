@@ -23,7 +23,7 @@
 #include "ajS.h"
 #include "drewC.h"
 #include "michaelW.cpp"
-#include "joannT.cpp"
+#include "joannT.h"
 #include<GL/gl.h>
 extern "C" {
 #include "fonts.h"
@@ -44,6 +44,7 @@ Display *dpy;
 Window win;
 GLXContext glc;
 
+GLuint bgTexture;
 
 //-----------------------------------------------------------------------------
 //Setup timers
@@ -275,7 +276,7 @@ void init_opengl(void)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     initialize_fonts();
-    load_background();
+    bgTexture = load_background();
 }
 
 
@@ -698,7 +699,7 @@ void physics(Game *g)
 
 void render(Game *g)
 {
-    draw_background();
+    draw_background(bgTexture);
     bool gameOver = endGame(g,boss);
     if(gameOver)
 	timeToEnd--;

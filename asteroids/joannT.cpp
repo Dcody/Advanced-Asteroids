@@ -3,14 +3,15 @@
  * Advanced-Asteroids *
  * Spring 2015        */
 
-#include "structures.h"
-#include <FMOD/fmod.h>
-#include <FMOD/wincompat.h>
-#include "fmod.h"
-#include "ppm.h"
+//#include "structures.h"
+//#include <FMOD/fmod.h>
+//#include <FMOD/wincompat.h>
+//#include "fmod.h"
+//#include "ppm.h"
+#include "joannT.h"
 
-Ppmimage *bgImage = NULL;
-GLuint bgTexture;
+//Ppmimage *bgImage = NULL;
+//GLuint bgTexture;
 
 void init_sounds(void)
 {
@@ -35,9 +36,10 @@ void play_music(int a) {
 }
 
 
-void load_background(void)
+GLuint load_background(void)
 {
-    bgImage = ppm6GetImage((char*)"./images/AA_background.ppm");
+    GLuint bgTexture;
+    Ppmimage *bgImage = ppm6GetImage((char*)"./images/AA_background.ppm");
     glGenTextures(1, &bgTexture);
     glBindTexture(GL_TEXTURE_2D, bgTexture);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
@@ -45,9 +47,10 @@ void load_background(void)
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
 	    bgImage->width, bgImage->height,
 	    0, GL_RGB, GL_UNSIGNED_BYTE, bgImage->data);
+    return bgTexture;
 }
 
-void draw_background(void)
+void draw_background(GLuint bgTexture)
 {
     glBindTexture(GL_TEXTURE_2D, bgTexture);
     glBegin(GL_QUADS);
