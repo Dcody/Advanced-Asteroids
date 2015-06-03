@@ -80,7 +80,7 @@ bool endGame(Game *g, Boss *&boss)
 {
     if(boss != NULL) {
 	if( boss->killShip == true) {
-	    g->ship.damageTaken = 101;
+	    g->ship.damageTaken = 99;
 	} 
     }
     //printf("ghjkl\n");
