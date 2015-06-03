@@ -78,12 +78,12 @@ void asteroidCollision(Asteroid *a, Game *g)
 
 bool endGame(Game *g, Boss *&boss)
 {
-   if(boss != NULL) {
-      if( boss->killShip == true) {
-      g->ship.damageTaken = 101;
-   } 
-   }
-   //printf("ghjkl\n");
+    if(boss != NULL) {
+	if( boss->killShip == true) {
+	    g->ship.damageTaken = 101;
+	} 
+    }
+    //printf("ghjkl\n");
     if (g->ship.damageTaken >= 100 || hadBoss == true) {
 	return true;
     } else {
@@ -106,7 +106,7 @@ void endMenu(Game *g)
     }
     ggprint16(&r, 50, yellow, "Your Score: %i", g->score);
     ggprint16(&r, 50, yellow, "Your Time: %i seconds",g->gameTimer);
-    ggprint16(&r, 50, yellow, "Your Accuracy: %4.2f%",g->accuracy);
+    ggprint16(&r, 50, yellow, "Your Accuracy: %4.2f %%",g->accuracy);
     r.bot = yres - 600;
     ggprint16(&r, 50, yellow, "Press ESC to Exit");
 }
@@ -130,7 +130,7 @@ void readOut(Game *g) {
 }
 
 void slowDown(Game *g) {
-    
+
     Flt rad = ((g->ship.angle+90.0) / 360.0f) * PI * 2.0;
     Flt xdir = cos(rad);
     Flt ydir = sin(rad);

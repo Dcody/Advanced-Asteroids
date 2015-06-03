@@ -68,6 +68,7 @@ int xres=1250, yres=900;
 GLuint asteroidtext, BossTex;
 int play_sounds = 0;
 const int super = 1;
+int asteroidsStart = 1;
 int killcount = 0;
 int timeToEnd = 100;
 
@@ -89,7 +90,6 @@ void endMenu(Game *game);
 void normalize(float *);
 bool isBossLevel = false;
 bool hadBoss = false;
-//Boss *boss = NULL;
 
 
 int main(int argc, char* argv[])
@@ -121,15 +121,24 @@ int main(int argc, char* argv[])
 	    done = check_keys(&e);
 	}
 	if (argc > 1 ) {
-	    string skip = argv[1];
-	    transform(skip.begin(), skip.end(), skip.begin(), ::tolower);
-	    if (skip == "skip") {
+	    string start = argv[1];
+	    transform(start.begin(), start.end(), start.begin(), ::tolower);
+	    if (start == "start") {
 		done = 3;
-	    } else {
-		cout << "You can also skip the start menu with: " << argv[0] << " skip" << endl;
-	    }
-	} else if (firstTime) {
-	    cout << "You can also skip the start menu with: " << argv[0] << " skip" << endl;
+	    } 
+	    if (start == "easy") {
+		asteroidsStart = 2;
+	    } 
+	    if (start == "medium") {
+		asteroidsStart = 5;
+	    } 
+	    if (start == "hard") {
+		asteroidsStart = 10;
+	    }	
+	} 
+	else if (firstTime) {
+	    cout << "You can also skip the start menu with: " << argv[0] << " start" << endl;
+	    cout << "You can control the difficulty with: ./asteroids easy/medium/hard" << endl;
 	    firstTime = false;
 	}
 	Rect r;
@@ -140,7 +149,7 @@ int main(int argc, char* argv[])
 	r.bot = yres - 500;
 	r.left = 250;
 	ggprint16(&r, 36, 0x00ffff00, "S: START GAME          C: CONTROLS            H: HOW TO           ESC: Exit Game");
-	if(done == 2){
+	if (done == 2){
 	    r.bot = yres - 200;
 	    r.left = 250;
 	    ggprint16(&r, 36, 0x00ffff00, "Arrow <-                Turn ship left");
@@ -150,7 +159,7 @@ int main(int argc, char* argv[])
 	    ggprint16(&r, 36, 0x00ffff00, "Space                    Shoot Gun");
 
 	}
-	if(done == 5){
+	if (done == 5){
 	    r.bot = yres - 200;
 	    r.left = 675;
 	    ggprint16(&r, 36, 0x00ffff00, " - Shoot asteroids to make them explode");
@@ -160,7 +169,8 @@ int main(int argc, char* argv[])
 	    ggprint16(&r, 20, 0x00ffff00, " - After hitting a set number of asteroids your ship");
 	    ggprint16(&r, 20, 0x00ffff00, "   will go into SUPERMODE for a short time, your ship");
 	    ggprint16(&r, 36, 0x00ffff00, "   does not take damage while in SUPERMODE");
-	    ggprint16(&r, 36, 0x00ffff00, " - Eliminate all asteroids to win");
+	    ggprint16(&r, 36, 0x00ffff00, " - Eliminate all asteroids to spawn the boss");
+	    ggprint16(&r, 36, 0x00ffff00, " - Kill the boss to win!");
 	}
 	if(done == 3){
 	    play_music(0);
@@ -296,7 +306,7 @@ void check_resize(XEvent *e)
 
 void init(Game *g) {
     // start with 10 asteroids
-    for (int j=0; j<1; j++) {
+    for (int j=0; j<asteroidsStart; j++) {
 	Asteroid *a = new Asteroid;
 	a->nverts = 4;
 	a->radius = rnd()*80.0 + 40.0;
@@ -444,7 +454,6 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
     ta->color[3] = 0.0;
     ta->vel[0] = a->vel[0] + (rnd()*2.0-1.0);
     ta->vel[1] = a->vel[1] + (rnd()*2.0-1.0);
-    //std::cout << "frag" << std::endl;
 }
 
 void physics(Game *g)
@@ -474,9 +483,6 @@ void physics(Game *g)
 
     //boss planet mvt
     BossMvmtBulletCol(g,boss,hadBoss);
-    //if (boss == NULL)
-       //cout << "Boss is Null\n";	
-
 
 
     //Update bullet positions
@@ -519,17 +525,17 @@ void physics(Game *g)
 	a->pos[0] += a->vel[0];
 	a->pos[1] += a->vel[1];
 	//Check for collision with window edges
-	if (a->pos[0] < -50) {
-	    a->pos[0] += (float)xres+100;
+	if (a->pos[0] < (a->radius * -1)) {
+	    a->pos[0] += (float)xres+50;
 	}
-	else if (a->pos[0] > (float)xres+50) {
-	    a->pos[0] -= (float)xres+100;
+	else if (a->pos[0] > (float)xres+a->radius) {
+	    a->pos[0] -= (float)xres+50;
 	}
-	else if (a->pos[1] < -50) {
-	    a->pos[1] += (float)yres+100;
+	else if (a->pos[1] < (a->radius * -1)) {
+	    a->pos[1] += (float)yres+50;
 	}
-	else if (a->pos[1] > (float)yres+50) {
-	    a->pos[1] -= (float)yres+100;
+	else if (a->pos[1] > (float)yres+a->radius) {
+	    a->pos[1] -= (float)yres+50;
 	}
 	a->angle += a->rotate;
 	a = a->next;
@@ -667,6 +673,7 @@ void physics(Game *g)
 	    g->bhead = b;
 	    g->nbullets++;
 	    g->bulletsFired++;
+	    //if superMode is active, add second stream of bullets
 	    if (g->ship.superMode >= super) {
 		Bullet *b2 = new Bullet;
 		timeCopy(&b2->time, &bt);
@@ -709,14 +716,10 @@ void render(Game *g)
 	isBossLevel = false;
 
     }
-    //cout << timeToEnd << "\n";
-    //cout << g->ship.damageTaken << "\n";
 
     if (gameOver==false || timeToEnd >= 0) {
 
 	if(g->ahead == NULL and boss==NULL and hadBoss == false) {
-	    cout << "Making boss\n";
-	    
 	    isBossLevel = true;
 	    buildBoss(boss);
 	    //hadBoss = true;
@@ -736,10 +739,6 @@ void render(Game *g)
 	    glColor4f(g->ship.color[0],g->ship.color[1],g->ship.color[2],1.0f);
 	}
 	setShipTexture(g);
-	glColor4f(1.0f,0.0f,0.0f,1.0f);
-	glBegin(GL_POINTS);
-	glVertex2f(0.0f,0.0f);
-	glEnd();
 	glPopMatrix();
 	if (keys[XK_Up]) {
 	    //draw thrust
@@ -758,12 +757,12 @@ void render(Game *g)
 		xe = -xdir * r + rnd() * 18.0 - 9.0;
 		ye = -ydir * r + rnd() * 18.0 - 9.0;
 		if (r < 26.0) {
-		    glColor4f(9.0f,9.0f,9.0f,1.0f);
+		    glColor4f(9.0f,0.0f,9.0f,1.0f);
 		} else {
 		    if (r > 26 && r <= 52) {
-			glColor4f(9.0f,9.0f,0.0f,1.0f);
+			glColor4f(0.0f,9.0f,9.0f,1.0f);
 		    } else {
-			glColor4f(9.0f,0.0f,0.0f,1.0f);
+			glColor4f(0.0f,9.0f,9.0f,1.0f);
 		    }
 		}
 		glVertex2f(g->ship.pos[0]+xs,g->ship.pos[1]+ys);
@@ -776,7 +775,7 @@ void render(Game *g)
 	{
 	    Asteroid *a = g->ahead;
 	    while (a) {
-		if (g->gameTimer%15 == 0 
+		if (g->gameTimer%20 == 0 
 			&& g->nasteroids <= 20 
 			&& g->gameTimer != 0 
 			&& g->score > 100) {
@@ -856,68 +855,6 @@ void render(Game *g)
 	    glPopMatrix();
 
 
-	}
-
-
-	//-------------------------------------------------------------------------
-	//Draw the asteroids
-	{
-	    Asteroid *a = g->ahead;
-	    while (a) {
-		if (g->gameTimer%15 == 0 
-			&& g->nasteroids <= 20 
-			&& g->gameTimer != 0 
-			&& g->score > 100) {
-		    resizeAsteroid(a);
-		}
-
-		glColor4f(a->color[0],a->color[1],a->color[2],1.0f);
-		glBindTexture(GL_TEXTURE_2D, asteroidtext);
-		glPushMatrix();
-		glTranslatef(a->pos[0], a->pos[1], a->pos[2]);
-		glRotatef(a->angle, 0.0f, 0.0f, 1.0f);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0,1);
-		glVertex2f(a->vert[0][0], a->vert[0][1]);
-		glTexCoord2f(1,1);
-		glVertex2f(a->vert[1][0], a->vert[1][1]);
-		glTexCoord2f(1,0);
-		glVertex2f(a->vert[2][0], a->vert[2][1]);
-		glTexCoord2f(0,0);
-		glVertex2f(a->vert[3][0], a->vert[3][1]);
-		glEnd();
-		glPopMatrix();
-
-		//Center Point Dot
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBegin(GL_POINTS);
-		glVertex2f(a->pos[0], a->pos[1]);
-		glEnd();
-		//next asteroid
-		a = a->next;
-	    }
-	}
-	//-------------------------------------------------------------------------
-	//Draw the bullets
-	{
-	    Bullet *b = g->bhead;
-	    while (b) {
-		float size = 1.0;
-		glColor4f(b->color[0], b->color[1], b->color[2],1.0f);
-		glBegin(GL_POINTS);
-		glVertex2f(b->pos[0],      b->pos[1]);
-		glVertex2f(b->pos[0]-size, b->pos[1]);
-		glVertex2f(b->pos[0]+size, b->pos[1]);
-		glVertex2f(b->pos[0],      b->pos[1]-size);
-		glVertex2f(b->pos[0],      b->pos[1]+size);
-		glColor4f(b->color[0], b->color[1], b->color[2],1.0f);
-		glVertex2f(b->pos[0]-size, b->pos[1]-size);
-		glVertex2f(b->pos[0]-size, b->pos[1]+size);
-		glVertex2f(b->pos[0]+size, b->pos[1]-size);
-		glVertex2f(b->pos[0]+size, b->pos[1]+size);
-		glEnd();
-		b = b->next;
-	    }
 	}
 	struct timespec at;
 	clock_gettime(CLOCK_REALTIME, &at);

@@ -198,14 +198,14 @@ void BossMvmtBulletCol(Game *&g, Boss *&boss, bool &hadBoss) {
 
 	}
 	if(boss != NULL) {
-	d0 = g->ship.pos[0] - boss->pos[0];
-	d1 = g->ship.pos[1] - boss->pos[1];
-	dist = sqrt(d0*d0 + d1*d1);
-	if(dist < boss->radius) {
-	    boss->killShip = true;
-	} else {
-	    boss->killShip = false;
-	}
+	    d0 = g->ship.pos[0] - boss->pos[0];
+	    d1 = g->ship.pos[1] - boss->pos[1];
+	    dist = sqrt(d0*d0 + d1*d1);
+	    if(dist < boss->radius) {
+		boss->killShip = true;
+	    } else {
+		boss->killShip = false;
+	    }
 	}
 
     }
