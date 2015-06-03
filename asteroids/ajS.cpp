@@ -191,11 +191,13 @@ void BossMvmtBulletCol(Game *&g, Boss *&boss, bool &hadBoss) {
 		delete boss;
 		boss=NULL;
 		hadBoss=true;
+		cout << "testing for seg fault" << endl;
 		break;
 	    }
 	    b = b->next;
 
 	}
+	if(boss != NULL) {
 	d0 = g->ship.pos[0] - boss->pos[0];
 	d1 = g->ship.pos[1] - boss->pos[1];
 	dist = sqrt(d0*d0 + d1*d1);
@@ -203,6 +205,7 @@ void BossMvmtBulletCol(Game *&g, Boss *&boss, bool &hadBoss) {
 	    boss->killShip = true;
 	} else {
 	    boss->killShip = false;
+	}
 	}
 
     }

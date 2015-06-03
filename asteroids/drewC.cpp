@@ -78,9 +78,12 @@ void asteroidCollision(Asteroid *a, Game *g)
 
 bool endGame(Game *g, Boss *&boss)
 {
-   if(boss != NULL && boss->killShip == true) {
+   if(boss != NULL) {
+      if( boss->killShip == true) {
       g->ship.damageTaken = 101;
    } 
+   }
+   //printf("ghjkl\n");
     if (g->ship.damageTaken >= 100 || hadBoss == true) {
 	return true;
     } else {

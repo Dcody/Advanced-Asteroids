@@ -97,6 +97,7 @@ int main(int argc, char* argv[])
     initXWindows();
     init_opengl();
     init_sounds();
+
     getShipTexture();
     Game game;
     srand(time(NULL));
@@ -473,6 +474,8 @@ void physics(Game *g)
 
     //boss planet mvt
     BossMvmtBulletCol(g,boss,hadBoss);
+    //if (boss == NULL)
+       //cout << "Boss is Null\n";	
 
 
 
@@ -701,15 +704,22 @@ void render(Game *g)
 {
     draw_background(bgTexture);
     bool gameOver = endGame(g,boss);
-    if(gameOver)
+    if(gameOver) {
 	timeToEnd--;
-    cout << timeToEnd << "\n";
+	isBossLevel = false;
 
-    if (!gameOver || timeToEnd >= 0) {
+    }
+    //cout << timeToEnd << "\n";
+    //cout << g->ship.damageTaken << "\n";
 
-	if(g->ahead == NULL and boss==NULL) {
+    if (gameOver==false || timeToEnd >= 0) {
+
+	if(g->ahead == NULL and boss==NULL and hadBoss == false) {
+	    cout << "Making boss\n";
+	    
 	    isBossLevel = true;
 	    buildBoss(boss);
+	    //hadBoss = true;
 	}
 	if( g->ship.superMode >= super && isBossLevel == false ) {
 	    //play_music(1);

@@ -19,7 +19,7 @@ void init_sounds(void)
 	printf("ERROR");
 	return;
     }
-    if(fmod_createsound((char *)"./sounds/10 Arpanauts.mp3", 0)) {
+    if(fmod_createsound((char *)"./sounds/Asteroids.mp3", 0)) {
 	printf("ERROR");
 	return;
     }
