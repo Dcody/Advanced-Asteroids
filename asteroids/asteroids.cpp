@@ -80,8 +80,8 @@ void init_opengl(void);
 void cleanupXWindows(void);
 void check_resize(XEvent *e);
 int check_keys(XEvent *e);
+void check_mouse(XEvent *e, Game *game);
 void init(Game *g);
-void init_sounds(void);
 void physics(Game *game);
 void render(Game *game);
 bool endGame(Game *game, Boss *&boss);
@@ -103,6 +103,7 @@ int main(int argc, char* argv[])
     srand(time(NULL));
     int done=0;
     bool firstTime = true;
+    set_mouse_position(100, 100);
 
     glBindTexture(GL_TEXTURE_2D, bgTexture);
     glBegin(GL_QUADS);
@@ -118,6 +119,7 @@ int main(int argc, char* argv[])
 	    XEvent e;
 	    XNextEvent(dpy, &e);
 	    check_resize(&e);
+	    check_mouse(&e, &game);
 	    done = check_keys(&e);
 	}
 	if (argc > 1 ) {
@@ -239,6 +241,7 @@ void initXWindows(void)
     set_title();
     glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
     glXMakeCurrent(dpy, win, glc);
+    show_mouse_cursor(0);
 }
 
 void reshape_window(int width, int height)
@@ -342,6 +345,82 @@ void normalize(Vec v) {
     v[0] *= len;
     v[1] *= len;
 }
+
+void check_mouse(XEvent *e, Game *g)
+{
+    static int savex = 0;
+    static int savey = 0;
+
+    if (e->type == ButtonRelease) {
+	return;
+    }
+    if (e->type == ButtonPress) {
+	if (e->xbutton.button == 1) {
+	    struct timespec bt;
+	    clock_gettime(CLOCK_REALTIME, &bt);
+	    double ts = timeDiff(&g->bulletTimer, &bt);
+	    if (ts > 0.1) {
+		timeCopy(&g->bulletTimer, &bt);
+		Bullet *b = new Bullet;
+		timeCopy(&b->time, &bt);
+		b->pos[0] = g->ship.pos[0];
+		b->pos[1] = g->ship.pos[1];
+		b->vel[0] = g->ship.vel[0];
+		b->vel[1] = g->ship.vel[1];
+		Flt rad = ((g->ship.angle+90.0) / 360.0f) * PI * 2.0;
+		Flt xdir = cos(rad);
+		Flt ydir = sin(rad);
+		b->pos[0] += xdir*20.0f;
+		b->pos[1] += ydir*20.0f;
+		b->vel[0] += xdir*6.0f + rnd()*0.1;
+		b->vel[1] += ydir*6.0f + rnd()*0.1;
+		b->color[0] = 1.0f;
+		b->color[1] = 1.0f;
+		b->color[2] = 1.0f;
+		b->next = g->bhead;
+		if (g->bhead != NULL)
+		    g->bhead->prev = b;
+		g->bhead = b;
+		g->nbullets++;
+	    }
+	}
+    }
+    if (savex != e->xbutton.x || savey != e->xbutton.y) {
+	int xdiff = savex - e->xbutton.x;
+	int ydiff = savey - e->xbutton.y;
+	if (xdiff > 0) {
+	    g->ship.angle += 0.3 * (float)xdiff;
+	    if (g->ship.angle >= 360.0f)
+		g->ship.angle -= 360.0f;
+	}
+	else if (xdiff < 0) {
+	    g->ship.angle += 0.3 * (float)xdiff;
+	    if (g->ship.angle < 0.0f)
+		g->ship.angle += 360.0f;
+	}
+	if (ydiff > 0) {
+	    Flt rad = ((g->ship.angle+90.0) / 360.0f) * PI * 2.0;
+	    Flt xdir = cos(rad);
+	    Flt ydir = sin(rad);
+	    g->ship.vel[0] += xdir * (float)ydiff * 0.01f;
+	    g->ship.vel[1] += ydir * (float)ydiff * 0.01f;
+	    Flt speed = sqrt(g->ship.vel[0]*g->ship.vel[0]+
+		    g->ship.vel[1] * g->ship.vel[1]);
+	    if (speed > 10.0f) {
+		speed = 10.0f;
+		normalize(g->ship.vel);
+		g->ship.vel[0] *= speed;
+		g->ship.vel[1] *= speed;
+	    }
+	    g->mouseThrustOn = true;
+	    clock_gettime(CLOCK_REALTIME, &g->mouseThrustTimer);
+	}
+	set_mouse_position(100,100);
+	savex=100;
+	savey=100;
+    }
+}
+
 int check_keys(XEvent *e)
 {
     //keyboard input?
@@ -698,6 +777,13 @@ void physics(Game *g)
 	    }
 	}
     }
+    if (g->mouseThrustOn) {
+	struct timespec mtt;
+	clock_gettime(CLOCK_REALTIME, &mtt);
+	double tdif = timeDiff(&mtt, &g->mouseThrustTimer);
+	if (tdif < -0.3)
+	    g->mouseThrustOn = false;
+    }
 }
 
 void render(Game *g)
@@ -741,7 +827,7 @@ void render(Game *g)
 	glVertex2f(0.0f,0.0f);
 	glEnd();
 	glPopMatrix();
-	if (keys[XK_Up]) {
+	if (keys[XK_Up] || g->mouseThrustOn) {
 	    //draw thrust
 	    Flt rad = ((g->ship.angle+90.0) / 360.0f) * PI * 2.0;
 	    //convert angle to a vector

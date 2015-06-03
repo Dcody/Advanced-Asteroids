@@ -111,6 +111,8 @@ struct Game {
     unsigned long int score;
     struct timespec bulletTimer;
     struct timespec asteroidTimer;
+    struct timespec mouseThrustTimer;
+    bool mouseThrustOn;
     Game() {
 	ahead = NULL;
 	bhead = NULL;
@@ -122,6 +124,7 @@ struct Game {
 	bulletsFired = 0.0;
 	bulletsHit = 0.0;
 	accuracy = 0.0;
+	mouseThrustOn = false;
     }
 };
 
