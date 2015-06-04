@@ -16,7 +16,7 @@ extern XEvent *e;
 
 void init_sounds(void);
 void play_music(int a);
-GLuint load_background(void);
+GLuint load_texture(char* pathname);
 void draw_background(GLuint bgTexture);
 void set_mouse_position(int x, int y);
 void show_mouse_cursor(const int onoff);

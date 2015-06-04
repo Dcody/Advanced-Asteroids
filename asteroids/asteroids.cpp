@@ -45,6 +45,7 @@ Window win;
 GLXContext glc;
 
 GLuint bgTexture;
+//GLuint shipTexture;
 
 //-----------------------------------------------------------------------------
 //Setup timers
@@ -107,7 +108,7 @@ int main(int argc, char* argv[])
 
     glBindTexture(GL_TEXTURE_2D, bgTexture);
     glBegin(GL_QUADS);
-    glColor4f(1.0f,0.0f,0.0f,1);
+    glColor4f(1.0f,1.0f,1.0f,1);
     glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
     glTexCoord2f(0.0f, 0.0f); glVertex2i(0, yres);
     glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, yres);
@@ -290,7 +291,7 @@ void init_opengl(void)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     initialize_fonts();
-    bgTexture = load_background();
+    bgTexture = load_texture((char*)"./images/AA_background.ppm");
 }
 
 
@@ -309,6 +310,7 @@ void check_resize(XEvent *e)
 
 void init(Game *g) {
     // start with 10 asteroids
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     for (int j=0; j<asteroidsStart; j++) {
 	Asteroid *a = new Asteroid;
 	a->nverts = 4;
@@ -795,6 +797,7 @@ void physics(Game *g)
 
 void render(Game *g)
 {
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     draw_background(bgTexture);
     bool gameOver = endGame(g,boss);
     if(gameOver) {
@@ -811,8 +814,6 @@ void render(Game *g)
 	    //hadBoss = true;
 	}
 	if( g->ship.superMode >= super && isBossLevel == false ) {
-	    fmod_stopsound();
-	    play_music(1);
 	    int x, y, z;
 	    x = random(3);
 	    y = random(3);
