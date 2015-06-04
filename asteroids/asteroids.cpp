@@ -75,6 +75,7 @@ int killcount = 0;
 int timeToEnd = 100;
 
 Boss *boss = NULL;
+Ship *ship = NULL;
 int keys[65536];
 
 //function prototypes
@@ -293,10 +294,10 @@ void init_opengl(void)
 
     initialize_fonts();
     bgTexture = load_texture((char*)"./images/AA_background.ppm", bgimage);
-    shipTexture2 = load_texture((char*)"./images/ship2.ppm", shipimage);
+    //shipTexture2 = load_texture((char*)"./images/ship2.ppm", shipimage);
 
-    setUpImage(shipTexture2, shipimage);
-    convertToRGBA(shipimage);
+    //setUpImage(shipTexture2, shipimage);
+    //convertToRGBA(shipimage);
 }
 
 
@@ -347,6 +348,7 @@ void init(Game *g) {
     }
     asteroidtext = getPpm();
     BossTex = getBossPpm();
+    shipTexture2 = getShipPpm((char*)"./images/ship2.ppm", shipimage);
     clock_gettime(CLOCK_REALTIME, &g->bulletTimer);
     clock_gettime(CLOCK_REALTIME, &g->asteroidTimer);
     memset(keys, 0, 65536);
@@ -837,6 +839,7 @@ void render(Game *g)
 	}
 	setShipTexture(g);
 	//draw_ship(g, shipTexture2);
+	//draw_ship2(g, shipTexture2);
 	glPopMatrix();
 	if (keys[XK_Up] || g->mouseThrustOn) {
 	    //draw thrust
@@ -954,6 +957,7 @@ void render(Game *g)
 
 
 	}
+	
 	struct timespec at;
 	clock_gettime(CLOCK_REALTIME, &at);
 	g->gameTimer = timeDiff(&g->asteroidTimer, &at);

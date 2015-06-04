@@ -61,6 +61,29 @@ void draw_ship(Game *g, GLuint imageTexture)
     glEnd();
 }
 
+void draw_ship2(Game *g, GLuint shipTexture)
+{
+    glEnable(GL_TEXTURE_2D);
+    glColor4ub(255, 255, 255, 255);
+    glPushMatrix();
+    //glColor4f(g->ship.color[0], g->ship.color[1], g->ship.color[2],1.0f);
+    glTranslatef(g->ship.pos[0], g->ship.pos[1], g->ship.pos[2]);
+    glBindTexture(GL_TEXTURE_2D, shipTexture);
+    //glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
+    glAlphaFunc(GL_GREATER, 0.0f);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0,0); glVertex2i(100,100);
+    glTexCoord2f(0,1); glVertex2i(-100,100);
+    glTexCoord2f(1,1); glVertex2i(100,100);
+    glTexCoord2f(1,0); glVertex2i(100,-100);
+    //g->ship.color[0]=1;
+    //g->ship.color[1]=1;
+    //g->ship.color[2]=1;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glPopMatrix();
+    glEnd();
+}
+
 void draw_background(GLuint bgTexture)
 {
     glBindTexture(GL_TEXTURE_2D, bgTexture);
@@ -118,6 +141,42 @@ void convertToRGBA(Ppmimage *picture)
 	    silhouetteData);
     delete [] silhouetteData;
 }
+
+/* test #2 for ship texture */
+
+GLuint getShipPpm(char* pathname, Ppmimage *&image)
+{
+    image = ppm6GetImage(pathname);
+	int w = image->width;
+	int h = image->height;
+	unsigned char tmpArr[w * h * 3];
+	unsigned char *t = image->data;
+	unsigned char dataWithAlpha[w * h * 4];
+
+	for (int i = 0; i < (w * h * 3); i++) {
+		tmpArr[i] = *(t + i);
+	}
+	for (int i = 0; i < (w*h); i++) {
+		dataWithAlpha[i * 4] = tmpArr[3 * i];
+		dataWithAlpha[i * 4 + 1] = tmpArr[3 * i + 1];
+		dataWithAlpha[i * 4 + 2] = tmpArr[3 * i + 2];
+		if((int)tmpArr[i * 3] == 0 && (int)tmpArr[i * 3 + 1] == 0 &&
+				(int)tmpArr[i * 3 + 2] == 0)
+			dataWithAlpha[i * 4 + 3] = 0;
+		else
+			dataWithAlpha[i * 4 + 3] = 250;
+	}
+
+	GLuint returningTex;
+	glGenTextures(1, &returningTex);
+	glBindTexture(GL_TEXTURE_2D, returningTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, 
+			GL_UNSIGNED_BYTE, dataWithAlpha);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	return returningTex;
+	}
 
 void set_mouse_position(int x, int y) {
     XWarpPointer(dpy, None, win, 0, 0, 0, 0, x, y);

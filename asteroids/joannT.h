@@ -21,7 +21,9 @@ unsigned char *buildAlphaData(Ppmimage *img);
 void setUpImage(GLuint texture, Ppmimage *picture);
 void convertToRGBA(Ppmimage *picture);
 void draw_ship(Game *g, GLuint imageTexture);
+void draw_ship2(Game *g, GLuint shipTexture);
 void draw_background(GLuint bgTexture);
+GLuint getShipPpm(char* pathname, Ppmimage *&image);
 void set_mouse_position(int x, int y);
 void show_mouse_cursor(const int onoff);
 
