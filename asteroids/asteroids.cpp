@@ -22,7 +22,7 @@
 #include "structures.h"
 #include "ajS.h"
 #include "drewC.h"
-#include "michaelW.cpp"
+#include "michaelW.h"
 #include "joannT.h"
 #include<GL/gl.h>
 extern "C" {
