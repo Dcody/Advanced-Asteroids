@@ -3,15 +3,7 @@
  * Advanced-Asteroids *
  * Spring 2015        */
 
-//#include "structures.h"
-//#include <FMOD/fmod.h>
-//#include <FMOD/wincompat.h>
-//#include "fmod.h"
-//#include "ppm.h"
 #include "joannT.h"
-
-//Ppmimage *bgImage = NULL;
-//GLuint bgTexture;
 
 void init_sounds(void)
 {
@@ -28,12 +20,16 @@ void init_sounds(void)
 	return;
     }
     fmod_setmode(0,FMOD_LOOP_NORMAL);
-	fmod_setmode(1,FMOD_LOOP_NORMAL);
+    fmod_setmode(1,FMOD_LOOP_NORMAL);
 }
 
 void play_music(int a) {
     fmod_playsound(a);
 }
+
+//void pause_music(int a) {
+//    fmod_setpaused(a);
+//}
 
 
 GLuint load_background(void)

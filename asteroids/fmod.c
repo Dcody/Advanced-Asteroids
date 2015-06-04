@@ -78,6 +78,18 @@ int fmod_playsound(int i)
 	return 0;
 }
 
+int fmod_stopsound()
+{
+    FMOD_RESULT result;
+    result = FMOD_Channel_Stop(channel);
+    //printf("fmod_playsound(%i)...\n",i);
+    if (ERRCHECK(result)) {
+	printf("error fmod_playsound()\n");
+	return 1;
+    }
+    return 0;
+}
+
 int fmod_setmode(int i, int mode)
 {
 	FMOD_RESULT result;

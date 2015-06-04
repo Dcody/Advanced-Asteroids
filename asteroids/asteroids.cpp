@@ -811,14 +811,16 @@ void render(Game *g)
 	    //hadBoss = true;
 	}
 	if( g->ship.superMode >= super && isBossLevel == false ) {
-	    //play_music(1);
+	    fmod_stopsound();
+	    play_music(1);
 	    int x, y, z;
 	    x = random(3);
 	    y = random(3);
 	    z = random(3);
 	    glColor4f(x,y,z,1.0f);
 	    if(g->ship.superMode >= (super + 100)) {
-		//fmod_stopsound(1); /*Not a Function*/
+		fmod_stopsound();
+		play_music(0);
 		g->ship.superMode = 0;
 	    }
 	} else {
