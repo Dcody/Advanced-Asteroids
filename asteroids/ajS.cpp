@@ -191,7 +191,7 @@ void BossMvmtBulletCol(Game *&g, Boss *&boss, bool &hadBoss) {
 		delete boss;
 		boss=NULL;
 		hadBoss=true;
-		cout << "testing for seg fault" << endl;
+		//cout << "testing for seg fault" << endl;
 		break;
 	    }
 	    b = b->next;
