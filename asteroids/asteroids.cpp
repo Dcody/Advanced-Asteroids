@@ -45,8 +45,9 @@ Window win;
 GLXContext glc;
 
 GLuint bgTexture;
-//GLuint shipTexture;
-
+GLuint shipTexture2;
+Ppmimage *bgimage = NULL;
+Ppmimage *shipimage = NULL;
 //-----------------------------------------------------------------------------
 //Setup timers
 const double physicsRate = 1.0 / 60.0;
@@ -291,7 +292,11 @@ void init_opengl(void)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     initialize_fonts();
-    bgTexture = load_texture((char*)"./images/AA_background.ppm");
+    bgTexture = load_texture((char*)"./images/AA_background.ppm", bgimage);
+    shipTexture2 = load_texture((char*)"./images/ship2.ppm", shipimage);
+
+    setUpImage(shipTexture2, shipimage);
+    convertToRGBA(shipimage);
 }
 
 
@@ -828,6 +833,7 @@ void render(Game *g)
 	    glColor4f(g->ship.color[0],g->ship.color[1],g->ship.color[2],1.0f);
 	}
 	setShipTexture(g);
+	//draw_ship(g, shipTexture2);
 	glPopMatrix();
 	if (keys[XK_Up] || g->mouseThrustOn) {
 	    //draw thrust
