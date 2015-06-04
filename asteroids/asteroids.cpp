@@ -922,9 +922,6 @@ void render(Game *g)
 	//Draw boss
 	if(isBossLevel == true) {
 
-	    boss->color[0]=1;
-	    boss->color[1]=1;
-	    boss->color[2]=1;
 	    glColor4f(boss->color[0],boss->color[1],boss->color[2],1.0f);
 	    glBindTexture(GL_TEXTURE_2D, BossTex);
 	    glPushMatrix();
@@ -939,6 +936,9 @@ void render(Game *g)
 	    glVertex2f(boss->vert[2][0], boss->vert[2][1]);
 	    glTexCoord2f(1,0);//0,0
 	    glVertex2f(boss->vert[3][0], boss->vert[3][1]);
+	    boss->color[0]=1;
+	    boss->color[1]=1;
+	    boss->color[2]=1;
 	    glEnd();
 	    glPopMatrix();
 
