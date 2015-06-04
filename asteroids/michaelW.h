@@ -12,6 +12,7 @@ extern Game g;
 //extern Ppmimage *shipImage = NULL;
 void getShipTexture(void);
 void setShipTexture(Game *g);
+void changeShipTexture(void);
 
 #endif
 

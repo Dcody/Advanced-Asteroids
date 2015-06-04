@@ -689,6 +689,9 @@ void physics(Game *g)
     }
     //---------------------------------------------------
     //check keys pressed now
+    if(keys[XK_k])  {
+        changeShipTexture();
+    }
     if (keys[XK_Left]) {
 	g->ship.angle += 4.0;
 	if (g->ship.angle >= 360.0f)

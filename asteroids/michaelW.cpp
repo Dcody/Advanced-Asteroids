@@ -26,13 +26,13 @@ void setShipTexture(Game *g)  {
     glClear(GL_COLOR_BUFFER_BIT);
     glEnd();
 }
-/*
+
 void changeShipTexture(void)  {
     shipImage = ppm6GetImage((char*)"./images/ship2.ppm");
     glGenTextures(1, &shipTexture);
     glBindTexture(GL_TEXTURE_2D, shipTexture);
     gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, shipImage->width, shipImage->height, GL_RGB, GL_UNSIGNED_BYTE, shipImage->data);
 }
-*/
+
 
 
