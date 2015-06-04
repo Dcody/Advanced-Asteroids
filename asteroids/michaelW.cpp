@@ -26,9 +26,9 @@ void setShipTexture(Game *g){
     glRotatef(g->ship.angle, 0.0f, 0.0f, 1.0f);
     glBegin(GL_TRIANGLE_STRIP);
 
-    glVertex2f(  -20.0f,-10.0f); glTexCoord2f(0.0f, 0.2f);
+    glVertex2f(  -20.0f,-10.0f); glTexCoord2f(0.5f, 0.2f);
     glVertex2f(0.0f,  20.0f); glTexCoord2f(0.5f, 1.0f);
-    glVertex2f(0.0f,  -6.0f);  glTexCoord2f(0.5f, 0.2f);
+    glVertex2f(0.0f,  -6.0f);  glTexCoord2f(0.0f, 0.2f);
     glVertex2f(20.0f,  -10.0f); glTexCoord2f(1.0f, 0.2f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnd();
