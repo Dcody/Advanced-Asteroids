@@ -15,7 +15,7 @@ void init_sounds(void)
 	printf("ERROR");
 	return;
     }
-    if(fmod_createsound((char *)"./sounds/starpower.mp3", 1)) {
+    if(fmod_createsound((char *)"./sounds/boss_music.mp3", 1)) {
 	printf("ERROR");
 	return;
     }
@@ -58,31 +58,9 @@ void draw_ship(Game *g, GLuint imageTexture)
     glTexCoord2f(0.0,0.0); glVertex2i(-20,30);
     glTexCoord2f(1.0,0.0); glVertex2i(20,30);
     glTexCoord2f(1.0,1.0); glVertex2i(20,-30);
-    glClear(GL_COLOR_BUFFER_BIT);
+    //glClear(GL_COLOR_BUFFER_BIT);
     //glDisable(GL_ALPHA_TEST);
     glDisable(GL_TEXTURE_2D);
-    glEnd();
-}
-
-void draw_ship2(Game *g, GLuint shipTexture)
-{
-    //glColor4ub(255, 255, 255, 255);
-    glPushMatrix();
-    //glColor4f(g->ship.color[0], g->ship.color[1], g->ship.color[2],1.0f);
-    glTranslatef(g->ship.pos[0], g->ship.pos[1], g->ship.pos[2]);
-    glBindTexture(GL_TEXTURE_2D, shipTexture);
-    glRotatef(g->ship.angle, 0.0f, 0.0f, 1.0f);
-    //glAlphaFunc(GL_GREATER, 0.0f);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0,0); glVertex2i(100,100);
-    glTexCoord2f(0,1); glVertex2i(-100,100);
-    glTexCoord2f(1,1); glVertex2i(100,100);
-    glTexCoord2f(1,0); glVertex2i(100,-100);
-    //g->ship.color[0]=1;
-    //g->ship.color[1]=1;
-    //g->ship.color[2]=1;
-    glClear(GL_COLOR_BUFFER_BIT);
-    glPopMatrix();
     glEnd();
 }
 
@@ -143,8 +121,6 @@ void convertToRGBA(Ppmimage *picture)
 	    silhouetteData);
     delete [] silhouetteData;
 }
-
-/* test #2 for ship texture */
 
 GLuint getShipPpm(char* pathname, Ppmimage *&image)
 {

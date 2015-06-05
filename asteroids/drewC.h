@@ -4,11 +4,12 @@ void resizeAsteroid(Asteroid *a);
 void asteroidCollision(Asteroid *a, Game *g);
 extern void normalize(float *);
 void slowDown(Game *g);
-void readOut(Game *g);
+void readOut(Game *g, Boss *&boss);
 void endMenu(Game *g);
 bool endGame(Game *g);
 float bulletAccuracy(Game *g);
 extern const int super;
 extern bool hadBoss;
+extern bool isBossLevel;
 #endif
 

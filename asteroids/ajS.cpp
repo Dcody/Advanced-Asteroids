@@ -66,11 +66,11 @@ void buildBoss(Boss *&boss) {
 	boss->vert[i][1] = cos(angle) * (boss->radius);
 	angle += inc;
     }
-    boss->pos[0]= xres/2.0;
+    boss->pos[0]= xres/1.5;
     boss->pos[1]= yres;
     boss->pos[2]= 0;
-    boss->vel[0]= 0;
-    boss->vel[1]= -1;
+    boss->vel[0]= rand() % 6 + (-3);
+    boss->vel[1]= rand() % 6 + (-3);
 
     boss->lifePoint = 100;
 
@@ -175,8 +175,8 @@ void BossMvmtBulletCol(Game *&g, Boss *&boss, bool &hadBoss) {
 		boss->lifePoint--;
 
 		if (boss->lifePoint % 10 == 0) {
-		    boss->vel[0] = random(3);
-		    boss->vel[0] = random(3);
+		    boss->vel[0] = rand() % 3 + 5;
+		    boss->vel[1] = rand() % 3 + 5;
 		}
 
 
@@ -201,7 +201,7 @@ void BossMvmtBulletCol(Game *&g, Boss *&boss, bool &hadBoss) {
 	    d0 = g->ship.pos[0] - boss->pos[0];
 	    d1 = g->ship.pos[1] - boss->pos[1];
 	    dist = sqrt(d0*d0 + d1*d1);
-	    if(dist < boss->radius) {
+	    if(dist < boss->radius * 0.85) {
 		boss->killShip = true;
 	    } else {
 		boss->killShip = false;

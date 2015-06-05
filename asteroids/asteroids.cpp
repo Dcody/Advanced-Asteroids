@@ -1,14 +1,9 @@
 //CS335 Spring 2015
 //
 //Program: Advanced Asteroids
-//Authors:  Drew Cody, JoAnn Tuazon, Michael Wines, Amador Joao Silva
+//Authors:  Drew Cody, JoAnn Tuazon, Amador Joao Silva, Michael Wines
 //Date:    2015
 //
-// Possible additions:
-// ----------------------
-// control of bullet launch point
-// score keeping
-// levels of difficulty
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -22,9 +17,9 @@
 #include "structures.h"
 #include "ajS.h"
 #include "drewC.h"
-#include "michaelW.h"
 #include "joannT.h"
 #include<GL/gl.h>
+#include<GL/glx.h>
 extern "C" {
 #include "fonts.h"
 }
@@ -69,8 +64,8 @@ int xres=1250, yres=900;
 
 GLuint asteroidtext, BossTex;
 int play_sounds = 0;
-const int super = 1;
-int asteroidsStart = 1;
+const int super = 100;
+int asteroidsStart = 5;
 int killcount = 0;
 int timeToEnd = 100;
 
@@ -84,7 +79,6 @@ void init_opengl(void);
 void cleanupXWindows(void);
 void check_resize(XEvent *e);
 int check_keys(XEvent *e);
-void check_mouse(XEvent *e, Game *game);
 void init(Game *g);
 void physics(Game *game);
 void render(Game *game);
@@ -101,7 +95,6 @@ int main(int argc, char* argv[])
     init_opengl();
     init_sounds();
 
-    //getShipTexture();
     Game game;
     srand(time(NULL));
     int done=0;
@@ -116,13 +109,12 @@ int main(int argc, char* argv[])
     glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, yres);
     glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, 0);
     glEnd();
-
+//DREWC-------------------------------------------------------------------------------------------------------------
     while (done != 1) {
 	while (XPending(dpy)) {
 	    XEvent e;
 	    XNextEvent(dpy, &e);
 	    check_resize(&e);
-	    check_mouse(&e, &game);
 	    done = check_keys(&e);
 	}
 	if (argc > 1 ) {
@@ -184,6 +176,7 @@ int main(int argc, char* argv[])
 	}
 	glXSwapBuffers(dpy, win);
     }
+//DREWC---------------------------------------------------------------------------------------------------
     clock_gettime(CLOCK_REALTIME, &timePause);
     clock_gettime(CLOCK_REALTIME, &timeStart);
     while (done != 1) {
@@ -365,82 +358,7 @@ void normalize(Vec v) {
     v[0] *= len;
     v[1] *= len;
 }
-
-void check_mouse(XEvent *e, Game *g)
-{
-    static int savex = 0;
-    static int savey = 0;
-
-    if (e->type == ButtonRelease) {
-	return;
-    }
-    if (e->type == ButtonPress) {
-	if (e->xbutton.button == 1) {
-	    struct timespec bt;
-	    clock_gettime(CLOCK_REALTIME, &bt);
-	    double ts = timeDiff(&g->bulletTimer, &bt);
-	    if (ts > 0.1) {
-		timeCopy(&g->bulletTimer, &bt);
-		Bullet *b = new Bullet;
-		timeCopy(&b->time, &bt);
-		b->pos[0] = g->ship.pos[0];
-		b->pos[1] = g->ship.pos[1];
-		b->vel[0] = g->ship.vel[0];
-		b->vel[1] = g->ship.vel[1];
-		Flt rad = ((g->ship.angle+90.0) / 360.0f) * PI * 2.0;
-		Flt xdir = cos(rad);
-		Flt ydir = sin(rad);
-		b->pos[0] += xdir*20.0f;
-		b->pos[1] += ydir*20.0f;
-		b->vel[0] += xdir*6.0f + rnd()*0.1;
-		b->vel[1] += ydir*6.0f + rnd()*0.1;
-		b->color[0] = 1.0f;
-		b->color[1] = 1.0f;
-		b->color[2] = 1.0f;
-		b->next = g->bhead;
-		if (g->bhead != NULL)
-		    g->bhead->prev = b;
-		g->bhead = b;
-		g->nbullets++;
-	    }
-	}
-    }
-    if (savex != e->xbutton.x || savey != e->xbutton.y) {
-	int xdiff = savex - e->xbutton.x;
-	int ydiff = savey - e->xbutton.y;
-	if (xdiff > 0) {
-	    g->ship.angle += 0.3 * (float)xdiff;
-	    if (g->ship.angle >= 360.0f)
-		g->ship.angle -= 360.0f;
-	}
-	else if (xdiff < 0) {
-	    g->ship.angle += 0.3 * (float)xdiff;
-	    if (g->ship.angle < 0.0f)
-		g->ship.angle += 360.0f;
-	}
-	if (ydiff > 0) {
-	    Flt rad = ((g->ship.angle+90.0) / 360.0f) * PI * 2.0;
-	    Flt xdir = cos(rad);
-	    Flt ydir = sin(rad);
-	    g->ship.vel[0] += xdir * (float)ydiff * 0.01f;
-	    g->ship.vel[1] += ydir * (float)ydiff * 0.01f;
-	    Flt speed = sqrt(g->ship.vel[0]*g->ship.vel[0]+
-		    g->ship.vel[1] * g->ship.vel[1]);
-	    if (speed > 10.0f) {
-		speed = 10.0f;
-		normalize(g->ship.vel);
-		g->ship.vel[0] *= speed;
-		g->ship.vel[1] *= speed;
-	    }
-	    g->mouseThrustOn = true;
-	    clock_gettime(CLOCK_REALTIME, &g->mouseThrustTimer);
-	}
-	set_mouse_position(100,100);
-	savex=100;
-	savey=100;
-    }
-}
-
+ 
 int check_keys(XEvent *e)
 {
     //keyboard input?
@@ -711,8 +629,8 @@ void physics(Game *g)
 	Flt rad = ((g->ship.angle+90.0) / 360.0f) * PI * 2.0;
 	Flt xdir = cos(rad);
 	Flt ydir = sin(rad);
-	g->ship.vel[0] += xdir*0.05f;
-	g->ship.vel[1] += ydir*0.05f;
+	g->ship.vel[0] += xdir*0.1f;
+	g->ship.vel[1] += ydir*0.1f;
 	Flt speed = sqrt(g->ship.vel[0]*g->ship.vel[0]+
 		g->ship.vel[1]*g->ship.vel[1]);
 	if (speed > 7.0f) {
@@ -808,42 +726,35 @@ void physics(Game *g)
 
 void render(Game *g)
 {
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+    //glClearColor(0.0, 0.0, 0.0, 1.0);
     draw_background(bgTexture);
     bool gameOver = endGame(g,boss);
     if(gameOver) {
 	timeToEnd--;
 	isBossLevel = false;
 
+	// TESTING
+	
+	Asteroid *a2 = g->ahead;
+	while(a2){
+	    Asteroid *savea = a2->next;
+	    deleteAsteroid(g, a2);
+	    a2 = savea;
+	    g->nasteroids--;
+	}
+	endMenu(g);
     }
 
-    if (gameOver==false || timeToEnd >= 0) {
+    if (gameOver==false && timeToEnd >= 0) {
 
 	if(g->ahead == NULL and boss==NULL and hadBoss == false) {
+	    fmod_stopsound();
+	    play_music(1);
 	    isBossLevel = true;
 	    buildBoss(boss);
 	    //hadBoss = true;
 	}
-	if( g->ship.superMode >= super && isBossLevel == false ) {
-	    int x, y, z;
-	    x = random(3);
-	    y = random(3);
-	    z = random(3);
-	    glColor4f(x,y,z,1.0f);
-	    if(g->ship.superMode >= (super + 100)) {
-		fmod_stopsound();
-		play_music(0);
-		g->ship.superMode = 0;
-	    }
-	} else {
-	    //glColor4f(g->ship.color[0],g->ship.color[1],g->ship.color[2],1.0f);
-	}
-	draw_ship(g, shipTexture2);
-	glPopMatrix();
 	//setShipTexture(g);
-	//draw_ship2(g, shipTexture2);
-	//draw_ship(g, shipTexture2);
-	//glPopMatrix();
 	if (keys[XK_Up] || g->mouseThrustOn) {
 	    glDisable(GL_TEXTURE_2D);
 	    //draw thrust
@@ -857,32 +768,37 @@ void render(Game *g)
 		xs = -xdir * 11.0f + rnd() * 4.0 - 2.0;
 		ys = -ydir * 11.0f + rnd() * 4.0 - 2.0;
 
-		r = rnd()*50.0+50.0;
+		r = rnd()*25.0+25.0;
 
 		xe = -xdir * r + rnd() * 18.0 - 9.0;
 		ye = -ydir * r + rnd() * 18.0 - 9.0;
-		if (r < 26.0) {
-		    glColor4f(9.0f,0.0f,9.0f,1.0f);
-		} else {
-		    if (r > 26 && r <= 52) {
-			glColor4f(0.0f,9.0f,9.0f,1.0f);
-		    } else {
-			glColor4f(0.0f,9.0f,9.0f,1.0f);
-		    }
-		}
+		glColor4f(0.0f,9.0f,9.0f,1.0f);
 		glVertex2f(g->ship.pos[0]+xs,g->ship.pos[1]+ys);
 		glVertex2f(g->ship.pos[0]+xe,g->ship.pos[1]+ye);
 		glEnd();
 	    }
 	    glEnable(GL_TEXTURE_2D);
 	}
-
+	draw_ship(g, shipTexture2);
+	if( g->ship.superMode >= super && isBossLevel == false ) {
+	    int x, y, z;
+	    x = random(3);
+	    y = random(3);
+	    z = random(3);
+	    glColor4f(x,y,z,1.0f);
+	    if(g->ship.superMode >= (super + 100)) {
+		g->ship.superMode = 0;
+	    }
+	} else {
+	    glColor4f(g->ship.color[0],g->ship.color[1],g->ship.color[2],1.0f);
+	}
+	glPopMatrix();
 	//-------------------------------------------------------------------------
 	//Draw the asteroids
 	{
 	    Asteroid *a = g->ahead;
 	    while (a) {
-		if (g->gameTimer%20 == 0 
+		if (g->gameTimer%60 == 0 
 			&& g->nasteroids <= 20 
 			&& g->gameTimer != 0 
 			&& g->score > 100) {
@@ -940,29 +856,6 @@ void render(Game *g)
 	    }
 	    glEnable(GL_TEXTURE_2D);
 	}
-	/*{
-	    Bullet *b = g->bhead;
-	    while (b) {
-		float size = 1.0;
-		glColor4f(b->color[0], b->color[1], b->color[2],1.0f);
-		glPushMatrix();
-		glBegin(GL_POINTS);
-		glVertex2f(b->pos[0],      b->pos[1]);
-		glVertex2f(b->pos[0]-size, b->pos[1]);
-		glVertex2f(b->pos[0]+size, b->pos[1]);
-		glVertex2f(b->pos[0],      b->pos[1]-size);
-		glVertex2f(b->pos[0],      b->pos[1]+size);
-		glColor4f(b->color[0], b->color[1], b->color[2],1.0f);
-		glVertex2f(b->pos[0]-size, b->pos[1]-size);
-		glVertex2f(b->pos[0]-size, b->pos[1]+size);
-		glVertex2f(b->pos[0]+size, b->pos[1]-size);
-		glVertex2f(b->pos[0]+size, b->pos[1]+size);
-		glEnd();
-		glPopMatrix();
-		b = b->next;
-	    }
-	}*/
-
 	//Draw boss
 	if(isBossLevel == true) {
 
@@ -990,18 +883,7 @@ void render(Game *g)
 	struct timespec at;
 	clock_gettime(CLOCK_REALTIME, &at);
 	g->gameTimer = timeDiff(&g->asteroidTimer, &at);
-	readOut(g);
-    }
-    //Gameover Flag, delete all remaining asteroids
-    if (gameOver) {
-	Asteroid *a2 = g->ahead;
-	while(a2){
-	    Asteroid *savea = a2->next;
-	    deleteAsteroid(g, a2);
-	    a2 = savea;
-	    g->nasteroids--;
-	}
-	endMenu(g);
+	readOut(g,boss);
     }
 }
 

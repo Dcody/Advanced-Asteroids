@@ -1,6 +1,5 @@
 //Author: Drew Cody
 //Class: CMPS 335
-//Assignment: HW3
 
 #include <cmath>
 #include "structures.h"
@@ -47,7 +46,7 @@ void asteroidCollision(Asteroid *a, Game *g)
 	d0 = g->ship.pos[0] - a->pos[0];
 	d1 = g->ship.pos[1] - a->pos[1];
 	dist = (d0*d0 + d1*d1);
-	if (dist < (a->radius * a->radius) * 0.5) {
+	if (dist < (a->radius * a->radius)) {
 	    //Calculate damage taken from impact with asteroid
 	    shipVelocity = abs(g->ship.vel[0] + g->ship.vel[1]);
 	    asteroidVelocity = abs(a->vel[0] + a->vel[1]);
@@ -56,12 +55,12 @@ void asteroidCollision(Asteroid *a, Game *g)
 		g->ship.damageTaken += 0;
 	    }
 	    else if (shipVelocity >= 2.5 || asteroidVelocity >= 2.5) {
-		g->ship.damageTaken += 5;
+		g->ship.damageTaken += 15;
 	    }
 	    else if (shipVelocity >= 1.5 || asteroidVelocity >= 1.5) {
-		g->ship.damageTaken += 2;
+		g->ship.damageTaken += 10;
 	    } else {
-		g->ship.damageTaken++;
+		g->ship.damageTaken += 5;
 	    }
 	    //Alter ships position and velocity	
 	    g->ship.pos[0] = a->pos[0] + d0 * 1.5;
@@ -80,10 +79,9 @@ bool endGame(Game *g, Boss *&boss)
 {
     if(boss != NULL) {
 	if( boss->killShip == true) {
-	    g->ship.damageTaken = 99;
+	    g->ship.damageTaken = 100;
 	} 
     }
-    //printf("ghjkl\n");
     if (g->ship.damageTaken >= 100 || hadBoss == true) {
 	return true;
     } else {
@@ -111,7 +109,7 @@ void endMenu(Game *g)
     ggprint16(&r, 50, yellow, "Press ESC to Exit");
 }
 
-void readOut(Game *g) {
+void readOut(Game *g, Boss *&boss) {
     int yellow = 0x00ffff00;
 
     Rect r;
@@ -121,7 +119,13 @@ void readOut(Game *g) {
     ggprint16(&r, 20, 0x00ff0000, "CS335 - Advanced Asteroids");
     ggprint16(&r, 20, yellow, "Score: %i", g->score);
     ggprint16(&r, 20, yellow, "Damage: %i", g->ship.damageTaken);
-
+    if (isBossLevel) {
+	Rect r2;
+	r2.bot = yres - 40;
+	r2.left = xres - 200;
+	r2.center = 0;
+	ggprint16(&r2, 20, 0x00ff0000, "Boss Health: %i", boss->lifePoint);
+    }
     if (g->bulletsFired == 0) {
 	g->accuracy = 0.0;
     } else {
@@ -138,12 +142,12 @@ void slowDown(Game *g) {
 	g->ship.vel[0] = 0.0f;
 	g->ship.vel[1] = 0.0f;
     } else {
-	g->ship.vel[0] += xdir * -0.025f;
-	g->ship.vel[1] += ydir * -0.025f;
+	g->ship.vel[0] += xdir * -0.1f;
+	g->ship.vel[1] += ydir * -0.1f;
 	Flt speed = sqrt(g->ship.vel[0]*g->ship.vel[0]+
 		g->ship.vel[1]*g->ship.vel[1]);
-	if (speed > 5.0f) {
-	    speed = 5.0f;
+	if (speed > 3.0f) {
+	    speed = 3.0f;
 	    normalize(g->ship.vel);
 	    g->ship.vel[0] *= speed;
 	    g->ship.vel[1] *= speed;
