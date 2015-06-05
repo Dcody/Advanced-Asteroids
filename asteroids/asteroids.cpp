@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
     init_opengl();
     init_sounds();
 
-    getShipTexture();
+    //getShipTexture();
     Game game;
     srand(time(NULL));
     int done=0;
@@ -836,13 +836,16 @@ void render(Game *g)
 		g->ship.superMode = 0;
 	    }
 	} else {
-	    glColor4f(g->ship.color[0],g->ship.color[1],g->ship.color[2],1.0f);
+	    //glColor4f(g->ship.color[0],g->ship.color[1],g->ship.color[2],1.0f);
 	}
+	draw_ship(g, shipTexture2);
+	glPopMatrix();
 	//setShipTexture(g);
 	//draw_ship2(g, shipTexture2);
 	//draw_ship(g, shipTexture2);
 	//glPopMatrix();
 	if (keys[XK_Up] || g->mouseThrustOn) {
+	    glDisable(GL_TEXTURE_2D);
 	    //draw thrust
 	    Flt rad = ((g->ship.angle+90.0) / 360.0f) * PI * 2.0;
 	    //convert angle to a vector
@@ -871,6 +874,7 @@ void render(Game *g)
 		glVertex2f(g->ship.pos[0]+xe,g->ship.pos[1]+ye);
 		glEnd();
 	    }
+	    glEnable(GL_TEXTURE_2D);
 	}
 
 	//-------------------------------------------------------------------------
@@ -915,6 +919,7 @@ void render(Game *g)
 	//Draw the bullets
 	{
 	    Bullet *b = g->bhead;
+	    glDisable(GL_TEXTURE_2D);
 	    while (b) {
 		glColor4ub(255,255,255,255);
 		float size = 1.0;
@@ -933,9 +938,8 @@ void render(Game *g)
 		glEnd();
 		b = b->next;
 	    }
+	    glEnable(GL_TEXTURE_2D);
 	}
-	draw_ship(g, shipTexture2);
-	glPopMatrix();
 	/*{
 	    Bullet *b = g->bhead;
 	    while (b) {
