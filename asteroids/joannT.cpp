@@ -44,33 +44,35 @@ GLuint load_texture(char* pathname, Ppmimage *&image)
 
 void draw_ship(Game *g, GLuint imageTexture)
 {
-    glEnable(GL_TEXTURE_2D);
     glColor4ub(255, 255, 255, 255);
+    glEnable(GL_TEXTURE_2D);
     glPushMatrix();
+    //glEnable(GL_TEXTURE_2D);
     glTranslatef(g->ship.pos[0],g->ship.pos[1],g->ship.pos[2]);
     glBindTexture(GL_TEXTURE_2D, imageTexture);
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.0f);
+    glRotatef(g->ship.angle, 0.0f, 0.0f, 1.0f);
+    //glEnable(GL_ALPHA_TEST);
+    //glAlphaFunc(GL_GREATER, 0.0f);
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0,0.0); glVertex2i(100,100);
-    glTexCoord2f(0.0,1.0); glVertex2i(-100,100);
-    glTexCoord2f(1.0,1.0); glVertex2i(100,100);
-    glTexCoord2f(1.0,0.0); glVertex2i(100,-100);
-    glBindTexture(GL_TEXTURE_2D,0);
-    glPopMatrix();
+    glTexCoord2f(0.0,1.0); glVertex2i(-20,-30);
+    glTexCoord2f(0.0,0.0); glVertex2i(-20,30);
+    glTexCoord2f(1.0,0.0); glVertex2i(20,30);
+    glTexCoord2f(1.0,1.0); glVertex2i(20,-30);
+    glClear(GL_COLOR_BUFFER_BIT);
+    //glDisable(GL_ALPHA_TEST);
+    glDisable(GL_TEXTURE_2D);
     glEnd();
 }
 
 void draw_ship2(Game *g, GLuint shipTexture)
 {
-    glEnable(GL_TEXTURE_2D);
-    glColor4ub(255, 255, 255, 255);
+    //glColor4ub(255, 255, 255, 255);
     glPushMatrix();
     //glColor4f(g->ship.color[0], g->ship.color[1], g->ship.color[2],1.0f);
     glTranslatef(g->ship.pos[0], g->ship.pos[1], g->ship.pos[2]);
     glBindTexture(GL_TEXTURE_2D, shipTexture);
-    //glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
-    glAlphaFunc(GL_GREATER, 0.0f);
+    glRotatef(g->ship.angle, 0.0f, 0.0f, 1.0f);
+    //glAlphaFunc(GL_GREATER, 0.0f);
     glBegin(GL_QUADS);
     glTexCoord2f(0,0); glVertex2i(100,100);
     glTexCoord2f(0,1); glVertex2i(-100,100);
@@ -79,7 +81,7 @@ void draw_ship2(Game *g, GLuint shipTexture)
     //g->ship.color[0]=1;
     //g->ship.color[1]=1;
     //g->ship.color[2]=1;
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
     glPopMatrix();
     glEnd();
 }

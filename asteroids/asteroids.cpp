@@ -294,10 +294,11 @@ void init_opengl(void)
 
     initialize_fonts();
     bgTexture = load_texture((char*)"./images/AA_background.ppm", bgimage);
-    //shipTexture2 = load_texture((char*)"./images/ship2.ppm", shipimage);
-
-    //setUpImage(shipTexture2, shipimage);
-    //convertToRGBA(shipimage);
+    shipTexture2 = load_texture((char*)"./images/ship2.ppm", shipimage);
+    //shipimage = ppm6GetImage("./images/ship2.ppm");
+    //glGenTextures(1,&shipTexture2);
+    setUpImage(shipTexture2, shipimage);
+    convertToRGBA(shipimage);
 }
 
 
@@ -348,7 +349,7 @@ void init(Game *g) {
     }
     asteroidtext = getPpm();
     BossTex = getBossPpm();
-    shipTexture2 = getShipPpm((char*)"./images/ship2.ppm", shipimage);
+    //shipTexture2 = getShipPpm((char*)"./images/ship2.ppm", shipimage);
     clock_gettime(CLOCK_REALTIME, &g->bulletTimer);
     clock_gettime(CLOCK_REALTIME, &g->asteroidTimer);
     memset(keys, 0, 65536);
@@ -691,9 +692,9 @@ void physics(Game *g)
     }
     //---------------------------------------------------
     //check keys pressed now
-    if(keys[XK_k])  {
-        changeShipTexture();
-    }
+   /* if(keys[XK_k])  {
+        //changeShipTexture();
+    }*/
     if (keys[XK_Left]) {
 	g->ship.angle += 4.0;
 	if (g->ship.angle >= 360.0f)
@@ -837,10 +838,10 @@ void render(Game *g)
 	} else {
 	    glColor4f(g->ship.color[0],g->ship.color[1],g->ship.color[2],1.0f);
 	}
-	setShipTexture(g);
-	//draw_ship(g, shipTexture2);
+	//setShipTexture(g);
 	//draw_ship2(g, shipTexture2);
-	glPopMatrix();
+	//draw_ship(g, shipTexture2);
+	//glPopMatrix();
 	if (keys[XK_Up] || g->mouseThrustOn) {
 	    //draw thrust
 	    Flt rad = ((g->ship.angle+90.0) / 360.0f) * PI * 2.0;
@@ -871,6 +872,7 @@ void render(Game *g)
 		glEnd();
 	    }
 	}
+
 	//-------------------------------------------------------------------------
 	//Draw the asteroids
 	{
@@ -914,6 +916,7 @@ void render(Game *g)
 	{
 	    Bullet *b = g->bhead;
 	    while (b) {
+		glColor4ub(255,255,255,255);
 		float size = 1.0;
 		glColor4f(b->color[0], b->color[1], b->color[2],1.0f);
 		glBegin(GL_POINTS);
@@ -931,6 +934,30 @@ void render(Game *g)
 		b = b->next;
 	    }
 	}
+	draw_ship(g, shipTexture2);
+	glPopMatrix();
+	/*{
+	    Bullet *b = g->bhead;
+	    while (b) {
+		float size = 1.0;
+		glColor4f(b->color[0], b->color[1], b->color[2],1.0f);
+		glPushMatrix();
+		glBegin(GL_POINTS);
+		glVertex2f(b->pos[0],      b->pos[1]);
+		glVertex2f(b->pos[0]-size, b->pos[1]);
+		glVertex2f(b->pos[0]+size, b->pos[1]);
+		glVertex2f(b->pos[0],      b->pos[1]-size);
+		glVertex2f(b->pos[0],      b->pos[1]+size);
+		glColor4f(b->color[0], b->color[1], b->color[2],1.0f);
+		glVertex2f(b->pos[0]-size, b->pos[1]-size);
+		glVertex2f(b->pos[0]-size, b->pos[1]+size);
+		glVertex2f(b->pos[0]+size, b->pos[1]-size);
+		glVertex2f(b->pos[0]+size, b->pos[1]+size);
+		glEnd();
+		glPopMatrix();
+		b = b->next;
+	    }
+	}*/
 
 	//Draw boss
 	if(isBossLevel == true) {
@@ -949,13 +976,11 @@ void render(Game *g)
 	    glVertex2f(boss->vert[2][0], boss->vert[2][1]);
 	    glTexCoord2f(1,0);//0,0
 	    glVertex2f(boss->vert[3][0], boss->vert[3][1]);
+	    glEnd();
+	    glPopMatrix();
 	    boss->color[0]=1;
 	    boss->color[1]=1;
 	    boss->color[2]=1;
-	    glEnd();
-	    glPopMatrix();
-
-
 	}
 	
 	struct timespec at;
