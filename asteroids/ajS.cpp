@@ -174,9 +174,19 @@ void BossMvmtBulletCol(Game *&g, Boss *&boss, bool &hadBoss) {
 		boss->color[2] = 0;
 		boss->lifePoint--;
 
-		if (boss->lifePoint % 10 == 0) {
-		    boss->vel[0] = rand() % 3 + 5;
-		    boss->vel[1] = rand() % 3 + 5;
+		if (boss->lifePoint % 5 == 0) {
+		    int temp1 = rand() % 6 + (-3);
+		    if( temp1 < 0 ) {
+			boss->vel[0] = (rand() % 3 + 5) * -1;
+		    } else {
+			boss->vel[0] = rand() % 3 + 5;
+		    }
+		    temp1 = rand() % 6 + (-3);
+		    if (temp1 < 0 ) {
+			boss->vel[1] = (rand() % 3 + 5) * -1;
+		    } else {
+		    	boss->vel[1] = rand() % 3 + 5;
+		    }
 		}
 
 
